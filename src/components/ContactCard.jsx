@@ -39,7 +39,7 @@ function ContactCard({ contact }) {
 
         <div className="flex text-3xl">
           <RiEditCircleLine onClick={onOpen} className="cursor-pointer" />
-          <IoMdTrash onClick={()=>deleteContact(contact.id)} className="cursor-pointer text-orange" />
+          <IoMdTrash {/*onClick={()=>deleteContact(contact.id)}*/} className="cursor-pointer text-orange" />
         </div>
       </div>
       <AddAndUpdateContact contact={contact} isUpdate isOpen={isOpen} onClose={onClose}/>
