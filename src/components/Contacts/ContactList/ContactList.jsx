@@ -1,9 +1,27 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faPen, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { ContactService } from "../../../services/ContactService";
 
 function ContactList() {
+
+  const [state, setState] = useState({
+    loading: false,
+    contacts:[],
+    ErrorMessage:""
+  });
+
+  useEffect(async()=>{
+    try {
+      let response = await ContactService.getAllContacts();
+      console.log(response.data);
+      
+    } catch (error) {
+      
+    }
+  }, [])
+
   return (
     <>
       <section className="contact-search p-3">
@@ -13,7 +31,7 @@ function ContactList() {
               <div className="col">
                 <p className="h3 fw-bolder">
                   Contact List
-                  <Link to={"/contact/add"} className="btn btn-primary mx-2">
+                  <Link to={"/contacts/add"} className="btn btn-primary mx-2">
                     {" "}
                     <FontAwesomeIcon icon={faPlusCircle} className="me-2" />
                     Add New
@@ -80,7 +98,7 @@ function ContactList() {
                       <Link to={`/contacts/view/:contactId`} className="btn btn-warning">
                         <FontAwesomeIcon icon={faEye} />
                       </Link>
-                      <Link to={`/contacts/view/:contactId`} className="btn btn-primary">
+                      <Link to={`/contacts/edit/:contactId`} className="btn btn-primary">
                         <FontAwesomeIcon icon={faPen} />
                       </Link>
                       <button className="btn btn-danger">

@@ -18,9 +18,7 @@ function App() {
         <Route path={'/contacts/add'} element={<AddContact/>}/>
         <Route path={'/contacts/view/:contactId'} element={<ViewContact/>}/>
         <Route path={'/contacts/edit/:contactId'} element={<EditContact/>}/>
-      </Routes>
-
-      
+      </Routes>      
     </>
   )
 }
