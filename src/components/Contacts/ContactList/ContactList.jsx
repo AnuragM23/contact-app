@@ -1,26 +1,42 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faPen, faPlusCircle, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEye,
+  faPen,
+  faPlusCircle,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 import { ContactService } from "../../../services/ContactService";
+import Spinner from "../../Spinner/Spinner";
 
 function ContactList() {
-
   const [state, setState] = useState({
     loading: false,
-    contacts:[],
-    ErrorMessage:""
+    contacts: [],
+    ErrorMessage: "",
   });
 
-  useEffect(async()=>{
+  useEffect(async () => {
     try {
+      setState({ ...state, loading: true });
       let response = await ContactService.getAllContacts();
-      console.log(response.data);
-      
+
+      setState({
+        ...state,
+        loading: false,
+        contacts: response.data,
+      });
     } catch (error) {
-      
+      setState({
+        ...state,
+        loading: false,
+        contacts: error.message,
+      });
     }
-  }, [])
+  }, []);
+
+  let { loading, contacts, errorMessage } = state;
 
   return (
     <>
@@ -73,11 +89,11 @@ function ContactList() {
         </div>
       </section>
 
-      <section className="contact-list">
+      {/* <section className="contact-list">
         <div className="container">
           <div className="row">
             <div className="col-md-6">
-              <div className="card">
+              <div className="card my-2">
                 <div className="card-body">
                   <div className="row align-items-center d-flex justify-content-around">
                     <div className="col-md-4">
@@ -89,20 +105,37 @@ function ContactList() {
                     </div>
                     <div className="col-md-7">
                       <ul className="list-group">
-                        <li className="list-group-item list-group-item-action"> Name : <span className="fw-bold">Rajan</span></li> 
-                        <li className="list-group-item list-group-item-action"> Mobile : <span className="fw-bold">+91 9999999999</span></li> 
-                        <li className="list-group-item list-group-item-action"> Email : <span className="fw-bold">rajan@dummy.com</span></li> 
+                        <li className="list-group-item list-group-item-action">
+                          {" "}
+                          Name : <span className="fw-bold">Rajan</span>
+                        </li>
+                        <li className="list-group-item list-group-item-action">
+                          {" "}
+                          Mobile :{" "}
+                          <span className="fw-bold">+91 9999999999</span>
+                        </li>
+                        <li className="list-group-item list-group-item-action">
+                          {" "}
+                          Email :{" "}
+                          <span className="fw-bold">rajan@dummy.com</span>
+                        </li>
                       </ul>
                     </div>
                     <div className="col-md-1 d-flex flex-column align-items-center gap-2">
-                      <Link to={`/contacts/view/:contactId`} className="btn btn-warning">
+                      <Link
+                        to={`/contacts/view/:contactId`}
+                        className="btn btn-warning"
+                      >
                         <FontAwesomeIcon icon={faEye} />
                       </Link>
-                      <Link to={`/contacts/edit/:contactId`} className="btn btn-primary">
+                      <Link
+                        to={`/contacts/edit/:contactId`}
+                        className="btn btn-primary"
+                      >
                         <FontAwesomeIcon icon={faPen} />
                       </Link>
                       <button className="btn btn-danger">
-                        <FontAwesomeIcon icon={faTrash}/>
+                        <FontAwesomeIcon icon={faTrash} />
                       </button>
                     </div>
                   </div>
@@ -111,7 +144,77 @@ function ContactList() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
+
+      {loading ? (
+        <Spinner />
+      ) : (
+        <section className="contact-list">
+          <div className="container">
+            <div className="row">
+              {contacts.length > 0 &&
+                contacts.map((contact) => {
+                  return (
+                    <div className="col-md-6" key={contact.id}>
+                      <div className="card my-2 mx-2">
+                        <div className="card-body">
+                          <div className="row align-items-center d-flex justify-content-around">
+                            <div className="col-md-4">
+                              <img
+                                src={contact.photo} 
+                                alt=""
+                                className="contact-img"
+                              />
+                            </div>
+                            <div className="col-md-7">
+                              <ul className="list-group">
+                                <li className="list-group-item list-group-item-action">
+                                  {" "}
+                                  Name : <span className="fw-bold">{contact.name}</span>
+                                </li>
+                                <li className="list-group-item list-group-item-action">
+                                  {" "}
+                                  Mobile :{" "}
+                                  <span className="fw-bold">
+                                    {contact.mobile}
+                                  </span>
+                                </li>
+                                <li className="list-group-item list-group-item-action">
+                                  {" "}
+                                  Email :{" "}
+                                  <span className="fw-bold">
+                                    {contact.email}
+                                  </span>
+                                </li>
+                              </ul>
+                            </div>
+                            <div className="col-md-1 d-flex flex-column align-items-center gap-2">
+                              <Link
+                                to={`/contacts/view/${contact.id}`}
+                                className="btn btn-warning"
+                              >
+                                <FontAwesomeIcon icon={faEye} />
+                              </Link>
+                              <Link
+                                to={`/contacts/edit/:contactId`}
+                                className="btn btn-primary"
+                              >
+                                <FontAwesomeIcon icon={faPen} />
+                              </Link>
+                              <button className="btn btn-danger">
+                                <FontAwesomeIcon icon={faTrash} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 }

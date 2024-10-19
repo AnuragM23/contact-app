@@ -5,6 +5,8 @@ import Navbar from './components/Navbar/Navbar'
 import EditContact from './components/Contacts/EditContact/EditContact'
 import AddContact from './components/Contacts/AddContact/AddContact'
 import ViewContact from './components/Contacts/ViewContact/ViewContact'
+import Spinner from './components/Spinner/Spinner'
+
 
 
 
