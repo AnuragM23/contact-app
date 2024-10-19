@@ -2,24 +2,26 @@ import React, { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 
 function ViewContact() {
-
   let { contactId } = useParams();
 
   const [state, setState] = useState({
     loading: false,
     contact: {},
-    errorMessage: ""
+    errorMessage: "",
   });
 
   useEffect(async () => {
     try {
+      setState({ ...state, loading: true });
       let response = await ContactService.getContact(contactId);
+      setState({ ...state, loading: false, contact: response.data });
     } catch (error) {
-      
+      setState({ ...state, loading: false, contact: error.message });
     }
-  }, [contactId])
-  
- 
+  }, [contactId]);
+
+  let {loading, contacts, errorMessage} = state;
+
   return (
     <>
       <section className="view-contact-intro p-3">
