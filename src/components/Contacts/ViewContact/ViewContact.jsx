@@ -10,7 +10,7 @@ function ViewContact() {
     loading: false,
     contact: {},
     errorMessage: "",
-    group : {}
+    group: {},
   });
 
   useEffect(async () => {
@@ -18,7 +18,12 @@ function ViewContact() {
       setState({ ...state, loading: true });
       let response = await ContactService.getContact(contactId);
       let groupResponse = await ContactService.getGroup(response.data);
-      setState({ ...state, loading: false, contact: response.data,  group : groupResponse.data });
+      setState({
+        ...state,
+        loading: false,
+        contact: response.data,
+        group: groupResponse.data,
+      });
     } catch (error) {
       setState({ ...state, loading: false, contact: error.message });
     }
@@ -48,7 +53,7 @@ function ViewContact() {
         <Spinner />
       ) : (
         <>
-          {Object.keys(contact).length > 0 && Object.keys(group).length > 0 &&  (
+          {Object.keys(contact).length > 0 && Object.keys(group).length > 0 && (
             <>
               <section className="view-contact">
                 <div className="container">
@@ -88,8 +93,7 @@ function ViewContact() {
                         </li>
                         <li className="list-group-item list-group-item-action">
                           {" "}
-                          Group :{" "}
-                          <span className="fw-bold">{group.name}</span>
+                          Group : <span className="fw-bold">{group.name}</span>
                         </li>
                       </ul>
                     </div>

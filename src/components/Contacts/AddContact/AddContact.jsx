@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { ContactService } from '../../../services/ContactService';
 
 function AddContact() {
+
+  let navigate = useNavigate();
+
   const [state, setState] = useState({
     loading: false,
     contact: {
@@ -24,24 +28,57 @@ function AddContact() {
         ...state.contact,
         [event.target.name]: event.target.value
       }
-    })
+    });
   }
 
-  useEffect(async() => {
+  useEffect(async () => {
     try {
+      setState({...state, loading: true});
       let response = await ContactService.getGroups();
-      console.log(response.data);
+      setState({
+        ...state,
+        loading: false,
+        groups: response.data
+      });
+      
+      
+      setState(
+        {
+          ...state,
+          loading: false,
+          contact: response.data,
+          groups: groupResponse.data
+        }
+      );
       
     } catch (error) {
       
     }
   }, [])
+
+  let submitForm = async (event) => {
+    event.preventDefault();
+
+    try {
+      let response = await ContactService.createContact(state.contact);
+      if(response){
+        navigate('/contacts/list', {replace: true});
+      }
+    } catch (error) {
+      setState({
+        ...state,
+        errorMessage: error.message
+      });
+      navigate('/contacts/add', {replace: true});
+    }
+  }
   
 
   let {loading, contact, groups, errorMessage} = state;
 
   return (
     <div>
+      {/* <pre>{JSON.stringify(contact)}</pre> */}
       <section className='add-contact p-3'>
         <div className="container">
           <div className="row">
@@ -52,7 +89,7 @@ function AddContact() {
           </div>
           <div className="row">
             <div className="col-md-4">
-              <form >
+              <form onSubmit={submitForm}>
                 <div className='mb-2'>
                   <input required={true} name='name'
                   value={contact.name}
@@ -61,7 +98,7 @@ function AddContact() {
                 <div className='mb-2'>
                   <input required={true} name='photo'
                   value={contact.photo}
-                  onChange={updateInput} type="text" className='form-control' placeholder='Photo url' />
+                  onChange={updateInput} type="text" className='form-control'  placeholder='Photo url' />
                 </div>
                 <div className='mb-2'>
                   <input required={true} name='mobile'
@@ -84,8 +121,15 @@ function AddContact() {
                   onChange={updateInput} type="text" className='form-control' placeholder='Title' />
                 </div>
                 <div className='mb-2'>
-                  <select  className="form-control">
+                  <select required={true} name='groupId'
+                  value={contact.title}
+                  onChange={updateInput} type="text" className="form-control">
                     <option value="">Select a Group</option>
+                    {
+                      groups.length > 0 && groups.map((group) => {
+                        return (<option key={group.id}>{group.name}</option>)
+                      })
+                    }
                   </select>
                 </div>
                 <div className='mb-2'>
