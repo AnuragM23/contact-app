@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { ContactService } from '../../../services/ContactService';
 
 function AddContact() {
@@ -69,7 +69,7 @@ function AddContact() {
         ...state,
         errorMessage: error.message
       });
-      navigate('/contacts/add', {replace: true});
+      navigate('/contacts/add', {replace: false});
     }
   }
   
@@ -78,7 +78,7 @@ function AddContact() {
 
   return (
     <div>
-      {/* <pre>{JSON.stringify(contact)}</pre> */}
+      <pre>{JSON.stringify(contact)}</pre>
       <section className='add-contact p-3'>
         <div className="container">
           <div className="row">
@@ -121,19 +121,19 @@ function AddContact() {
                   onChange={updateInput} type="text" className='form-control' placeholder='Title' />
                 </div>
                 <div className='mb-2'>
-                  <select required={true} name='groupId'
+                  <select  name='groupId'
                   value={contact.title}
                   onChange={updateInput} type="text" className="form-control">
-                    <option value="">Select a Group</option>
+                    <option value={``}>Select a Group</option>
                     {
                       groups.length > 0 && groups.map((group) => {
-                        return (<option key={group.id}>{group.name}</option>)
+                        return (<option value={group.id} key={group.id}>{group.name}</option>)
                       })
                     }
                   </select>
                 </div>
                 <div className='mb-2'>
-                  <input type="submit" className='btn btn-success' value={`Create`} />
+                  <input onClick={submitForm} type="submit" className='btn btn-success' value={`Create`} />
                   <Link to={'/contacts/list'} className='btn btn-dark ms-2'>Cancel</Link>
                 </div>
               </form>
