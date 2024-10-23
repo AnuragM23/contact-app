@@ -196,7 +196,7 @@ function ContactList() {
                                 <FontAwesomeIcon icon={faEye} />
                               </Link>
                               <Link
-                                to={`/contacts/edit/:contactId`}
+                                to={`/contacts/edit/${contact.id}`}
                                 className="btn btn-primary"
                               >
                                 <FontAwesomeIcon icon={faPen} />
