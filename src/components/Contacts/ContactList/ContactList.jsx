@@ -10,10 +10,18 @@ import {
 import { ContactService } from "../../../services/ContactService";
 import Spinner from "../../Spinner/Spinner";
 
+
+
 function ContactList() {
+
+  const [query, setQuery] = useState({
+    text: ''
+  });
+
   const [state, setState] = useState({
     loading: false,
     contacts: [],
+    filterdContacts: [], 
     ErrorMessage: "",
   });
 
@@ -26,6 +34,7 @@ function ContactList() {
         ...state,
         loading: false,
         contacts: response.data,
+        filterdContacts: response.data
       });
     } catch (error) {
       setState({
@@ -36,10 +45,38 @@ function ContactList() {
     }
   }, []);
 
-  let { loading, contacts, errorMessage } = state;
+  const clickDelete = async (contactId) => {
+    try {
+      let response = await ContactService.deleteContact(contactId);
+      if(response) {
+        setState({ ...state, loading: true });
+      let response = await ContactService.getAllContacts();
+
+      setState({
+        ...state,
+        loading: false,
+        contacts: response.data,
+        filterdContacts: response.data
+      });
+      }
+    } catch (error) {
+      setState({
+        ...state,
+        loading: false,
+        contacts: error.message,
+      });
+    }
+  }
+
+  const searchContacts = (event)=>{
+    setQuery({...query, text: event.text.value});
+  }
+
+  let { loading, contacts, filterdContacts, errorMessage } = state;
 
   return (
     <>
+      <pre>{JSON.stringify(query)}</pre>
       <section className="contact-search p-3">
         <div className="container">
           <div className="grid">
@@ -68,6 +105,8 @@ function ContactList() {
                     <div className="mb-2">
                       <input
                         type="text"
+                        value={query.text}
+                        onChange={searchContacts}
                         className="form-control"
                         placeholder="Search Names"
                       />
@@ -152,8 +191,8 @@ function ContactList() {
         <section className="contact-list">
           <div className="container">
             <div className="row">
-              {contacts.length > 0 &&
-                contacts.map((contact) => {
+              {filterdContacts.length > 0 &&
+                filterdContacts.map((contact) => {
                   return (
                     <div className="col-md-6" key={contact.id}>
                       <div className="card my-2 mx-2">
@@ -202,7 +241,7 @@ function ContactList() {
                                 <FontAwesomeIcon icon={faPen} />
                               </Link>
                               <button className="btn btn-danger">
-                                <FontAwesomeIcon icon={faTrash} />
+                                <FontAwesomeIcon onClick={()=> clickDelete(contact.id)} icon={faTrash} />
                               </button>
                             </div>
                           </div>

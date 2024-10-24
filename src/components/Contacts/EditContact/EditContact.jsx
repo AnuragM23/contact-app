@@ -24,12 +24,9 @@ function EditContact() {
   useEffect(async () => {
     try {
       setState({ ...state, loading: true });
-      let response = await ContactService.getGroups();
-      setState({
-        ...state,
-        loading: false,
-        groups: response.data,
-      });
+      let response = await ContactService.getContact(contactId);
+      let groupResponse = await ContactService.getGroups();
+      
 
       setState({
         ...state,
@@ -43,7 +40,7 @@ function EditContact() {
   const updateInput = (event) => {
     setState({
       ...state,
-      contact: {
+        contact: {
         ...state.contact,
         [event.target.name]: event.target.value,
       },
@@ -69,6 +66,8 @@ function EditContact() {
       navigate(`/contacts/edit/${contactId}`, { replace: false });
     }
   };
+  
+  
 
   let { loading, contact, groups, errorMessage } = state;
 
@@ -78,6 +77,7 @@ function EditContact() {
         <Spinner />
       ) : (
         <section className="add-contact p-3">
+          {/* <pre>{JSON.stringify(contact)}</pre> */}
           <div className="container">
             <div className="row">
               <div className="col">
@@ -180,6 +180,7 @@ function EditContact() {
                   </div>
                   <div className="mb-2">
                     <input
+                      onClick={submitForm}
                       type="submit"
                       className="btn btn-primary"
                       value={`Update`}
@@ -192,7 +193,7 @@ function EditContact() {
               </div>
               <div className="col-md-6">
                 <img
-                  src="https://imgs.search.brave.com/q30mtGI6Uq8L1sU9H02hXDiETyRoSxEtuLtXNNmTvSw/rs:fit:500:0:0:0/g:ce/aHR0cHM6Ly9wbHVz/cG5nLmNvbS9pbWct/cG5nL3VzZXItcG5n/LWljb24teW91bmct/dXNlci1pY29uLTI0/MDAucG5n"
+                  src={contact.photo} 
                   alt=""
                   className="img-fluid contact-img"
                 />

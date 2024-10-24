@@ -41,16 +41,6 @@ function AddContact() {
         groups: response.data
       });
       
-      
-      setState(
-        {
-          ...state,
-          loading: false,
-          contact: response.data,
-          groups: groupResponse.data
-        }
-      );
-      
     } catch (error) {
       
     }
@@ -78,7 +68,7 @@ function AddContact() {
 
   return (
     <div>
-      <pre>{JSON.stringify(contact)}</pre>
+      {/* <pre>{JSON.stringify(contact)}</pre> */}
       <section className='add-contact p-3'>
         <div className="container">
           <div className="row">
