@@ -10,19 +10,16 @@ import {
 import { ContactService } from "../../../services/ContactService";
 import Spinner from "../../Spinner/Spinner";
 
-
-
 function ContactList() {
-
   const [query, setQuery] = useState({
-    text: ''
+    text: "",
   });
 
   const [state, setState] = useState({
     loading: false,
     contacts: [],
-    filterdContacts: [], 
-    ErrorMessage: "",
+    filterdContacts: [],
+    errorMessage: "",
   });
 
   useEffect(async () => {
@@ -34,13 +31,13 @@ function ContactList() {
         ...state,
         loading: false,
         contacts: response.data,
-        filterdContacts: response.data
+        filterdContacts: response.data,
       });
     } catch (error) {
       setState({
         ...state,
         loading: false,
-        contacts: error.message,
+        errorMessage: error.message,
       });
     }
   }, []);
@@ -48,16 +45,16 @@ function ContactList() {
   const clickDelete = async (contactId) => {
     try {
       let response = await ContactService.deleteContact(contactId);
-      if(response) {
+      if (response) {
         setState({ ...state, loading: true });
-      let response = await ContactService.getAllContacts();
+        let response = await ContactService.getAllContacts();
 
-      setState({
-        ...state,
-        loading: false,
-        contacts: response.data,
-        filterdContacts: response.data
-      });
+        setState({
+          ...state,
+          loading: false,
+          contacts: response.data,
+          filterdContacts: response.data,
+        });
       }
     } catch (error) {
       setState({
@@ -66,11 +63,19 @@ function ContactList() {
         contacts: error.message,
       });
     }
-  }
+  };
 
-  const searchContacts = (event)=>{
-    setQuery({...query, text: event.text.value});
-  }
+  const searchContacts = (event) => {
+    setQuery({ ...query, text: event.target.value });
+    let theContacts = state.contacts.filter((contact) => {
+      return contact.name.toLowerCase().includes(event.target.value.toLowerCase());
+    });
+    // console.log(theContacts);
+    setState({
+      ...state,
+      filterdContacts: theContacts,
+    })
+  };
 
   let { loading, contacts, filterdContacts, errorMessage } = state;
 
@@ -104,9 +109,10 @@ function ContactList() {
                   <div className="col">
                     <div className="mb-2">
                       <input
-                        type="text"
+                        name="text"
                         value={query.text}
                         onChange={searchContacts}
+                        type="text"
                         className="form-control"
                         placeholder="Search Names"
                       />
@@ -200,7 +206,7 @@ function ContactList() {
                           <div className="row align-items-center d-flex justify-content-around">
                             <div className="col-md-4">
                               <img
-                                src={contact.photo} 
+                                src={contact.photo}
                                 alt=""
                                 className="contact-img"
                               />
@@ -209,7 +215,10 @@ function ContactList() {
                               <ul className="list-group">
                                 <li className="list-group-item list-group-item-action">
                                   {" "}
-                                  Name : <span className="fw-bold">{contact.name}</span>
+                                  Name :{" "}
+                                  <span className="fw-bold">
+                                    {contact.name}
+                                  </span>
                                 </li>
                                 <li className="list-group-item list-group-item-action">
                                   {" "}
@@ -241,7 +250,10 @@ function ContactList() {
                                 <FontAwesomeIcon icon={faPen} />
                               </Link>
                               <button className="btn btn-danger">
-                                <FontAwesomeIcon onClick={()=> clickDelete(contact.id)} icon={faTrash} />
+                                <FontAwesomeIcon
+                                  onClick={() => clickDelete(contact.id)}
+                                  icon={faTrash}
+                                />
                               </button>
                             </div>
                           </div>
